@@ -39,6 +39,15 @@ async function run() {
       const count = await productCollection.estimatedDocumentCount();
       res.send({ count, products });
     });
+
+    app.post("/productsByIds", async (req, res) => {
+      const ids = req.body;
+      const objectIds = ids.map((id) => ObjectId(id)); //je product gula drkr segula ber kore new array banano.
+      const query = { _id: { $in: objectIds } };
+      const cursor = productCollection.find(query);
+      const products = await cursor.toArray();
+      res.send(products);
+    });
   } finally {
   }
 }
