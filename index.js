@@ -24,11 +24,19 @@ async function run() {
     const productCollection = client.db("emaJohn").collection("products");
     //create api
     app.get("/products", async (req, res) => {
+      // workinG pagination starT
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+      // console.log(page, size);
+      // workinG pagination enD
+
       const query = {};
       const cursor = productCollection.find(query);
-      const products = await cursor.toArray();
       // workinG pagination
-      // const products = await cursor.limit(10).toArray();//Only 10 data will pass to the client site.//generally we don't do this.
+      const products = await cursor
+        .skip(page * size)
+        .limit(size)
+        .toArray();
       const count = await productCollection.estimatedDocumentCount();
       res.send({ count, products });
     });
